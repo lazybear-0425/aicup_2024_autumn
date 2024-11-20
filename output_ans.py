@@ -25,6 +25,8 @@ ForecastNum = 48 #預測筆數
 #%%
 #============================備註============================
 from datetime import datetime
+# flag
+# 這邊要改成檔案名稱
 NowDateTime = '2024-11-17T15_59_13Z'
 file_name = f'{NowDateTime}'
 
@@ -32,9 +34,9 @@ file_name = f'{NowDateTime}'
 # %%
 #============================預測數據============================
 
-#載入模型
+# flag
+# 要記得改成自己model的位址
 regressor = load_model(rf'D:\NCNU\aicup\2024\LSTM\model\{NowDateTime}.h5')
-# regressor = load_model('WheatherLSTM_2024-09-21T03_25_16Z.h5')
 
 #載入測試資料
 DataName = os.getcwd()+r'\upload(no answer).csv'
@@ -65,7 +67,8 @@ while(count < len(EXquestion)):
   for DaysCount in range(len(ReferTitle)):
     if(str(int(ReferTitle[DaysCount]))[:8] == str(int(EXquestion[count]))[:8]):
       inputs = np.append(inputs, ReferData[DaysCount])
-  
+  # flag
+  # 如果舊的找不到，要去新的找
   if len(inputs) == 0:
     DataName = os.getcwd()+'\ExampleTrainData(IncompleteAVG)\IncompleteAvgDATA_'+ strLocationCode +'_2024.csv'
     SourceData = pd.read_csv(DataName, encoding='utf-8')
@@ -113,6 +116,8 @@ while(count < len(EXquestion)):
 df = pd.DataFrame(PredictOutput, columns=['答案'])
 
 # 將 DataFrame 寫入 CSV 檔案
+# flag
+# 這邊要換成自己要存的地方
 df.to_csv(rf'csvfile/template/{NowDateTime}.csv', index=False) 
 print('Output CSV File Saved')
 

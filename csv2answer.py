@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-import os
+
+# 把跑出來的結果，放到要上傳的csv
 
 df1 = pd.read_csv('upload(no answer).csv')
 
