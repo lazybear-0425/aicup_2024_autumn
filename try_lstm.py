@@ -17,6 +17,8 @@ import numpy as np
 import pandas as pd
 import os
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # 只顯示警告和錯誤
+
 #設定LSTM往前看的筆數和預測筆數
 LookBackNum = 12 #LSTM往前看的筆數
 ForecastNum = 48 #預測筆數
@@ -24,9 +26,16 @@ ForecastNum = 48 #預測筆數
 X_train = []
 y_train = []
 
+idx = [i for i in range(1, 18)]
+for i in [2, 4, 7, 8, 9, 10, 12]:
+  idx.append(f'{i:02d}_2024')
+
 for i in range(1, 18):
   #載入訓練資料
-  DataName = os.getcwd()+rf'\ExampleTrainData(AVG)\AvgDATA_{i:02d}.csv'
+  if type(i) == int:
+    DataName = os.getcwd()+rf'\ExampleTrainData(AVG)\AvgDATA_{i:02d}.csv'
+  else:
+    DataName = os.getcwd()+rf'\ExampleTrainData(AVG)\AvgDATA_{i}.csv'
   SourceData = pd.read_csv(DataName, encoding='utf-8')
 
   #選擇要留下來的資料欄位(發電量)
@@ -54,7 +63,7 @@ print(X_train.shape)
 from datetime import datetime
 NowDateTime = datetime.now().strftime("%Y-%m-%dT%H_%M_%SZ")
 epoch = 2000
-other = 'Adafactor + merge 1 ~ 17'
+other = 'Adafactor + new data + merge 1 ~ 17'
 file_name = f'{NowDateTime}'
 
 
@@ -108,12 +117,12 @@ plt.savefig(rf'pic/{NowDateTime}')
 
 best_loss = 0
 best_epoch = 0
-if m1 == 'r2_score':
-  best_loss = np.max(np.array(history.history[m2]))
-  best_epoch = np.argmax(np.array(history.history[m2]))
-else: # loss
-  best_loss = np.min(np.array(history.history[m2]))
-  best_epoch = np.argmin(np.array(history.history[m2]))
+best_loss = np.max(np.array(history.history[m2]))
+best_epoch = np.argmax(np.array(history.history[m2]))
+
+best_mse = np.min(np.array(history.history[m2]))
+best_mse_epoch = np.argmin(np.array(history.history[m2]))
+
 
 
 
@@ -190,9 +199,9 @@ print('Output CSV File Saved')
 del df
 
 # %%
-print(f'best {m2}: \033[33m{best_loss}\033[0m in epoch \033[33m{best_epoch}\033[0m')
+print(f'best {m2}: \033[33m{best_loss}\033[0m in epoch \033[33m{best_epoch}\033[0m, \nand best mse : \033[33m{best_mse}\033[0m in epoch \033[33m{best_mse_epoch}\033[0m')
 df = pd.read_csv('outcome.csv')
 # 檔名, 時間, epoch,val_loss, min_val_loss, min_loss_epoch, 額外備註
-df.loc[len(df.index)] = [file_name, NowDateTime, epoch, m2, history.history[m2][-1], best_loss, best_epoch, other]
+df.loc[len(df.index)] = [file_name, NowDateTime, epoch, m2, history.history[m2][-1], best_loss, best_epoch, other, best_mse, best_mse_epoch]
 df.to_csv('outcome.csv', index=False, mode='w')
 # %%

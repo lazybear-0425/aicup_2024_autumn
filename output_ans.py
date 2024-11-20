@@ -25,7 +25,7 @@ ForecastNum = 48 #預測筆數
 #%%
 #============================備註============================
 from datetime import datetime
-NowDateTime = '2024-11-17T13_13_53Z'
+NowDateTime = '2024-11-17T15_59_13Z'
 file_name = f'{NowDateTime}'
 
 
@@ -33,11 +33,7 @@ file_name = f'{NowDateTime}'
 #============================預測數據============================
 
 #載入模型
-with custom_object_scope({
-    'Adafactor': Adafactor,
-    'LossScaleOptimizer': LossScaleOptimizer
-}):
-  regressor = load_model(rf'D:\NCNU\aicup\2024\LSTM\model\{NowDateTime}.h5')
+regressor = load_model(rf'D:\NCNU\aicup\2024\LSTM\model\{NowDateTime}.h5')
 # regressor = load_model('WheatherLSTM_2024-09-21T03_25_16Z.h5')
 
 #載入測試資料

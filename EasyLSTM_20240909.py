@@ -17,6 +17,8 @@ import numpy as np
 import pandas as pd
 import os
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # 只顯示警告和錯誤
+
 #設定LSTM往前看的筆數和預測筆數
 LookBackNum = 12 #LSTM往前看的筆數
 ForecastNum = 48 #預測筆數
@@ -106,12 +108,11 @@ plt.savefig(rf'pic/{NowDateTime}')
 
 best_loss = 0
 best_epoch = 0
-if m1 == 'r2_score':
-  best_loss = np.max(np.array(history.history[m2]))
-  best_epoch = np.argmax(np.array(history.history[m2]))
-else: # loss
-  best_loss = np.min(np.array(history.history[m2]))
-  best_epoch = np.argmin(np.array(history.history[m2]))
+best_loss = np.max(np.array(history.history[m2]))
+best_epoch = np.argmax(np.array(history.history[m2]))
+
+best_mse = np.min(np.array(history.history[m2]))
+best_mse_epoch = np.argmin(np.array(history.history[m2]))
 
 
 
@@ -188,9 +189,9 @@ print('Output CSV File Saved')
 del df
 
 # %%
-print(f'best {m2}: \033[33m{best_loss}\033[0m in epoch \033[33m{best_epoch}\033[0m')
+print(f'best {m2}: \033[33m{best_loss}\033[0m in epoch \033[33m{best_epoch}\033[0m, \nand best mse : \033[33m{best_mse}\033[0m in epoch \033[33m{best_mse_epoch}\033[0m')
 df = pd.read_csv('outcome.csv')
 # 檔名, 時間, epoch,val_loss, min_val_loss, min_loss_epoch, 額外備註
-df.loc[len(df.index)] = [file_name, NowDateTime, epoch, m2, history.history[m2][-1], best_loss, best_epoch, other]
+df.loc[len(df.index)] = [file_name, NowDateTime, epoch, m2, history.history[m2][-1], best_loss, best_epoch, other, best_mse, best_mse_epoch]
 df.to_csv('outcome.csv', index=False, mode='w')
 # %%
